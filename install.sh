@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -u
+
 TARGET_ARCH=armhf
 : ${TARGET_DIST=buster}
 : ${DEB_MIRROR=http://deb.debian.org/debian/}
