@@ -65,13 +65,13 @@ echo "label: $DISKLABEL_TYPE"
 echo "first-lba: $DISKLABEL_FIRST_LBA"
 if [ "$USE_LVM" = yes ]; then
 	cat <<-EOF
-	,256M,83,*
-	,,8e,*
+	,256M,linux,*
+	,,lvm,-
 	EOF
 else
-	echo ",256M,83,*"
 	if [ "$SWAP_SIZE" -gt 0 ]; then
-		echo ",$SWAP_SIZE,82"
+	echo ",256M,linux,*"
+		echo ",$SWAP_SIZE,swap,-"
 	fi
 	echo ",$ROOT_SIZE"
 fi
