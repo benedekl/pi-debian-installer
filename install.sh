@@ -5,6 +5,7 @@ TARGET_ARCH=armhf
 : ${DEB_MIRROR=http://deb.debian.org/debian/}
 : ${PACKAGES=firmware-brcm80211,e2fsprogs,vim,u-boot-tools,cpufrequtils,initramfs-tools,xfsprogs,ssh}
 : ${USE_LVM=yes}
+: ${USE_SWAP=yes}
 : ${ROOT_SIZE=2048M}
 : ${SWAP_SIZE=1024M}
 : ${ROOTFS_TYPE=ext4}
@@ -69,8 +70,8 @@ if [ "$USE_LVM" = yes ]; then
 	,,lvm,-
 	EOF
 else
-	if [ "$SWAP_SIZE" -gt 0 ]; then
 	echo ",256M,linux,*"
+	if [ "$USE_SWAP" = yes ]; then
 		echo ",$SWAP_SIZE,swap,-"
 	fi
 	echo ",$ROOT_SIZE"
@@ -91,7 +92,7 @@ if [ "$USE_LVM" = yes ]; then
 	vgcreate -f "$vgname" "$physdev"
 	CLEANUP+=("vgchange -a n $vgname")
 
-	if [ "$SWAP_SIZE" -gt 0 ]; then
+	if [ "$USE_SWAP" = yes ]; then
 		lvcreate --yes -W y -n swap -L $SWAP_SIZE $vgname
 		swapdev="/dev/$vgname/swap"
 	fi
@@ -99,7 +100,7 @@ if [ "$USE_LVM" = yes ]; then
 	rootdev="/dev/$vgname/root"
 	PACKAGES="$PACKAGES,lvm2"
 else
-	if [ "$SWAP_SIZE" -gt 0 ]; then
+	if [ "$USE_SWAP" = yes ]; then
 		swapdev=${_devices[2]}
 		rootdev=${_devices[3]}
 	else
